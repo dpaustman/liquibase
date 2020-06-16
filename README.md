@@ -138,3 +138,7 @@ if __name__ == '__main__':
 
 	print("Listening on port 8088")
 	server.serve_forever()
+	
+import xmlrpc.client as xmlrpclib
+
+server = xmlrpclib.ServerProxy("http://localhost:8088")
