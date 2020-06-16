@@ -1,7 +1,7 @@
 # liquibase
 Main Liquibase Source
 from kazoo.client import KazooClient
-
+from xmlrpc.server import SimpleXMLRPCServer
 
 class ZKConfigDao():
 
@@ -45,7 +45,7 @@ class ZKConfigDao():
 	#创建路径
 	def create(self, path, value):
 		if not self.__zkclient.exists(path):
-			self.__zkclient.create(path, value=bstr(value).encode())
+			self.__zkclient.create(path, value=str(value).encode())
 			print("create success!")
 		else:
 			print("path existed!")
@@ -123,11 +123,18 @@ class ZKConfigDao():
 
 if __name__ == '__main__':
 
-	zkconfigdao = ZKConfigDao()
-	zkconfigdao.create("/data/data1", "123")
-	rest = zkconfigdao.get("/data/")
-	print(rest)
+	obj = ZKConfigDao()
+	# zkconfigdao.create("/data/data1", "123")
+	# rest = zkconfigdao.get("/data/")
+	# print(rest)
+	#
+	# zkconfigdao.set("/data", "hello world!")
+	# rest2 = zkconfigdao.get("/data")
+	# print(rest2)
 
-	zkconfigdao.set("/data", "hello world!")
-	rest2 = zkconfigdao.get("/data")
-	print(rest2)
+	server = SimpleXMLRPCServer(("localhost", 8088))
+	# 将实例注册给rpc server
+	server.register_instance(obj)
+
+	print("Listening on port 8088")
+	server.serve_forever()
